@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 22:12:05 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/02/09 05:39:30 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/02/09 07:40:57 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/time.h>
+#include <stdlib.h>
 
-void	initialize(t_data *data)
+static void	initialize_data(t_data *data)
 {
 	data->number_of_philosophers = 0;
 	data->time_to_die = 0;
@@ -25,20 +27,24 @@ void	initialize(t_data *data)
 	data->forks = NULL;
 	data->philosophers = NULL;
 }
-void	__attribute__((destructor)) cleanup_function(void)
+
+static void	create_scene(t_data *d)
 {
-	printf("finished\n");
+	d->forks = malloc(d->number_of_philosophers * sizeof(pthread_mutex_t));
+	if (!d->forks)
+		exit(1); // free and exit needed ofc
+	d->philosophers = malloc(d->number_of_philosophers * sizeof(t_philosophers));
+	if (!d->philosophers)
+		exit(1);
 }
+
 int main(int argc, char **argv)
 {
-	t_data data;
+	t_data	data;
 	
-	initialize(&data);
+	initialize_data(&data);
 	insert_input(argc, argv, &data);
-	printf("%d\n", data.number_of_philosophers);
-	printf("%d\n", data.time_to_die);
-	printf("%d\n", data.time_to_eat);
-	printf("%d\n", data.time_to_sleep);
-	printf("%d\n", data.number_of_times_each_philosopher_must_eat);
+	create_scene(&data);
+	
 	return (0);
 }

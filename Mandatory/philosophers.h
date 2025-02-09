@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 04:53:23 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/02/09 05:43:36 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/02/09 07:30:38 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ typedef struct s_philosophers
 
 typedef struct s_data
 {
-	unsigned int				number_of_philosophers;
-	unsigned int				time_to_die;
-	unsigned int				time_to_eat;
-	unsigned int				time_to_sleep;
-	unsigned int				number_of_times_each_philosopher_must_eat;
+	unsigned int	number_of_philosophers;
+	unsigned int	time_to_die;
+	unsigned int	time_to_eat;
+	unsigned int	time_to_sleep;
+	unsigned int	number_of_times_each_philosopher_must_eat;
 	pthread_mutex_t	*forks;
 	t_philosophers	*philosophers;
 }		t_data;
