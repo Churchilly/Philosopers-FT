@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 22:12:05 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/02/11 19:48:48 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/05/19 02:50:05 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,63 +14,49 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/time.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
-static void	initialize_data(t_data *data)
+int	create_scene(t_program *p);
+int	establish_actors(t_program *p);
+int	play_scene(t_program *p);
+
+void	ft_bzero(void *addr, int size)
 {
-	data->number_of_philosophers = 0;
-	data->time_to_die = 0;
-	data->time_to_eat = 0;
-	data->time_to_sleep = 0;
-	data->number_of_times_each_philosopher_must_eat = 0;
-	data->forks = NULL;
-	data->philosophers = NULL;
+	char	*bytes;
+	int		i;
+
+	bytes = addr;
+	i = 0;
+	while (i < size)
+		bytes[i++] = '\0';
+	return ;
 }
 
-static void	*routine(void *arg);
-
-static void	create_scene(t_data *d)
+void	input_test(t_data *data)
 {
-	int	i;
-	
-	d->forks = malloc(d->number_of_philosophers * sizeof(pthread_mutex_t));
-	if (!d->forks)
-		exit(1); // free and exit needed ofc
-	d->philosophers = malloc(d->number_of_philosophers * sizeof(t_philosopher));
-	if (!d->philosophers)
-		exit(1);
-	i = -1;
-	while (++i < d->number_of_philosophers)
-		if (pthread_mutex_init(&d->forks[i], NULL))
-			exit(1);
-	i = -1;
-	while (++i < d->number_of_philosophers)
-	{
-		d->philosophers[i].id = i;
-		d->philosophers[i].left_fork = &d->forks[i];
-		d->philosophers[i].right_fork = &d->forks[(i + 1) % d->number_of_philosophers];
-		if (pthread_create(&d->philosophers[i].thread, NULL, routine, (void *)&d->philosophers))
-			exit(1);
-	}
-	i = -1;
-	while (++i < d->number_of_philosophers)
-		if (pthread_join(d->philosophers[i].thread, NULL))
-			exit(1);
+	printf("%d\n", data->num_of_philos);
+	printf("%d\n", data->time_to_die);
+	printf("%d\n", data->time_to_eat);
+	printf("%d\n", data->time_to_sleep);
+	printf("%d\n", data->must_eat);
 }
 
 int main(int argc, char **argv)
 {
-	t_data	data;
-	int	i;
+	t_data			data;
+	t_program		program;
 	
-	initialize_data(&data);
-	insert_input(argc, argv, &data);
-	create_scene(&data);
-	while (++i < data.number_of_philosophers)
-		if (pthread_mutex_destroy(&data.forks[i]))
-			exit(1);
-	free(data.forks);
-	free(data.philosophers);
+	ft_bzero(&data, sizeof(t_data));
+	if (insert_input(argc, argv, &data))
+		return (1);
+	//input_test(&data);
+	program.data = &data;
+	program.everyone_ok = 1;
+	if (create_scene(&program) || establish_actors(&program)
+		|| play_scene(&program))
+		return (1); // ofc need to free	
+	free(program.forks);
+	free(program.philosophers);
 	return (0);
 }

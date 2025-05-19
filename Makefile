@@ -1,7 +1,7 @@
 CC				= cc
 CFLAGS			= -Wall -Wextra -Werror -pthread
 
-NAME			= philo
+NAME			= philo.exe
 
 MANDATORY_DIR 		= philo
 BONUS_DIR			= philo_bonus
