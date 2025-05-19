@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 21:03:21 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/05/19 03:11:46 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/05/19 07:13:27 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	pass_time(long time, long start, long *time_passed)
 	(*time_passed) = current_time - start;
 	if (time - (*time_passed) > 1e3)
 	{
-		if (usleep(time / 5))
+		if (usleep((*time_passed) / 2))
 			return (printf("usleep() failed: %d.\n", errno), 1);
 	}
 	else
@@ -84,11 +84,7 @@ suseconds_t	get_elapsed_time(t_program *p)
 	time = get_current_time();
 	if (time < 0)
 		return (-1);
-	if (thread_lock(&p->lock))
-		return (-1);
 	ret = time - p->start_time;
-	if (thread_unlock(&p->lock))
-		return (-1);
 	return (ret);
 }
 
@@ -99,10 +95,6 @@ int	start_timer(t_program *p)
 	time = get_current_time();
 	if (time < 0)
 		return (-1);
-	if (thread_lock(&p->lock))
-		return (-1);
 	p->start_time = time;
-	if (thread_unlock(&p->lock))
-		return (-1);
 	return (0);
 }

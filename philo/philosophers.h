@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 04:53:23 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/05/19 02:53:45 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/05/19 07:35:53 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ struct	s_philosopher
 	pthread_mutex_t	lock;
 	int 			id;
 	pthread_t 		thread;
-	pthread_mutex_t forks[2];
+	pthread_mutex_t *fork_one;
+	pthread_mutex_t *fork_two;
 	int				eaten_meal;
 	suseconds_t		last_meal;
 	t_program		*program;
@@ -51,7 +52,7 @@ struct s_program
 	pthread_t		monitor;
 	int				everyone_ok;
 	int				running_thread_count;
-	int				end;
+	int				philos_done_eating;
 	suseconds_t		start_time;
 	pthread_mutex_t	*forks;
 	t_philosopher	*philosophers;

@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 18:36:45 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/05/19 02:58:09 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/05/19 06:12:50 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ int	wait_other_actors(t_program *p)
 	while (!ready)
 	{
 		if (thread_lock(&p->lock))
-			return (-1);
-		if (p->running_thread_count == p->data->num_of_philos)
+			return (1);
+		if (p->running_thread_count == (p->data->num_of_philos + 1))
 			ready = 1;
 		if (thread_unlock(&p->lock))
-			return (-1);
+			return (1);
 		usleep(100);
 	}
 	return (0);
@@ -41,10 +41,10 @@ int	wait_other_actors(t_program *p)
 int	say_ready(t_program *p)
 {
 	if (thread_lock(&p->lock))
-		return (-1);
+		return (1);
 	p->running_thread_count += 1;
 	if (thread_unlock(&p->lock))
-		return (-1);
+		return (1);
 	return (0);	
 }
 
@@ -56,6 +56,8 @@ int	is_everyone_alive(t_program *p)
 	if (thread_lock(&p->lock))
 		return (-1);
 	if (!p->everyone_ok)
+		ret = 0;
+	if (p->philos_done_eating == p->data->num_of_philos)
 		ret = 0;
 	if (thread_unlock(&p->lock))
 		return (-1);

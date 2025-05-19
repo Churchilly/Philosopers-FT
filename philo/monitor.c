@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 07:55:15 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/05/19 03:12:42 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/05/19 06:32:40 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ suseconds_t	get_elapsed_time(t_program *p);
 int	wait_other_actors(t_program *p);
 int	is_everyone_alive(t_program *p);
 int	start_timer(t_program *p);
+int	say_ready(t_program *p);
 
 int	check_philo_status(t_philosopher *philo)
 {
@@ -55,9 +56,7 @@ void	*monitoring(void *arg)
 	int			retval;
 	
 	p = (t_program *)arg;
-	if (wait_other_actors(p) == -1)
-		return ((void *)1);
-	if (start_timer(p))
+	if (start_timer(p) || say_ready(p) || wait_other_actors(p))
 		return ((void *)1);
 	retval = is_everyone_alive(p);
 	if (retval == -1)

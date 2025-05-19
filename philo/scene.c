@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 22:22:36 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/05/19 03:21:44 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/05/19 07:39:44 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,15 +65,15 @@ static int	init_philo(t_program *p, int ptr)
 	p->philosophers[ptr].id = ptr;
 	if (ptr % 2 == 1)
 	{
-		p->philosophers[ptr].forks[0] = p->forks[ptr];
-		p->philosophers[ptr].forks[1] = p->forks[(ptr + 1)
-			% p->data->num_of_philos];
+		p->philosophers[ptr].fork_one = &(p->forks[ptr]);
+		p->philosophers[ptr].fork_two = &(p->forks[(ptr + 1)
+			% p->data->num_of_philos]);
 	}
 	else
 	{
-		p->philosophers[ptr].forks[0] = p->forks[(ptr + 1)
-				% p->data->num_of_philos];
-		p->philosophers[ptr].forks[1] = p->forks[ptr];
+		p->philosophers[ptr].fork_one = &(p->forks[(ptr + 1)
+				% p->data->num_of_philos]);
+		p->philosophers[ptr].fork_two = &(p->forks[ptr]);
 	}
 	status = pthread_mutex_init(&p->philosophers[ptr].lock, NULL);
 	if (status != 0)
