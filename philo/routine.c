@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 23:04:25 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/05/19 07:36:20 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:37:51 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,12 @@ int	log_status(t_philosopher *philo, char *msg)
 	time = get_elapsed_time(philo->program);
 	if (time < 0)
 		return (1);
-	printf("%ld %d %s.\n", time, philo->id, msg);
+	if (thread_lock(&philo->program->lock))
+		return (1);
+	if (philo->program->everyone_ok)
+		printf("%ld %d %s.\n", time, philo->id, msg);
+	if (thread_unlock(&philo->program->lock))
+		return (1);
 	return (0);
 }
 
@@ -59,7 +64,6 @@ int	philo_eat(t_philosopher *philo)
 		return (1);
 	if (philo_perform(philo->data->time_to_eat))
 		return (1);
-	log_status(philo, "just performed eat");
 	if (thread_unlock(philo->fork_one))
 		return(1);
 	if (thread_unlock(philo->fork_two))
@@ -69,7 +73,16 @@ int	philo_eat(t_philosopher *philo)
 
 int	philo_think(t_philosopher *philo)
 {
+	int	time_to_think;
+	
 	log_status(philo, "is thinking");
+	if (philo->data->num_of_philos % 2 == 0)
+		return (0);
+	time_to_think = (philo->data->time_to_eat * 2) - philo->data->time_to_sleep;
+	if (time_to_think < 0)
+		return (0);
+	if (philo_perform(time_to_think * 0.5))
+		return (1);
 	return (0);
 }
 
@@ -113,8 +126,20 @@ void	*routine(void *arg)
 void	*one_fork_routine(void	*arg)
 {
 	t_philosopher *philo;
-
+	int retval;
+	
 	philo = (t_philosopher *)arg;
-	(void)philo;
+	if (say_ready(philo->program) || wait_other_actors(philo->program))
+		return ((void *)1);
+	retval = is_everyone_alive(philo->program);
+	if (retval == -1)
+		return((void *)1);
+	log_status(philo, "has taken a fork");
+	while (retval)
+	{
+		retval = is_everyone_alive(philo->program);
+		if (retval == -1)
+			return ((void *)1);
+	}
 	return (NULL);
 }

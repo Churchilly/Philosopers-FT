@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 07:55:15 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/05/19 06:32:40 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:33:01 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,9 @@ int	check_philo_status(t_philosopher *philo)
 	{
 		if (thread_lock(&philo->program->lock))
 			return (-1);
+		if (philo->program->everyone_ok)
+			printf("%ld %d died.\n", time, philo->id);
 		philo->program->everyone_ok = 0;
-		printf("%ld %d died.\n", time, philo->id);
 		if (thread_unlock(&philo->program->lock))
 			return (-1);
 	}
