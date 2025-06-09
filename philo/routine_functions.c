@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 14:57:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/09 23:44:35 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/10 00:35:56 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,10 @@ int	log_status(t_philosopher *philo, char *msg)
 	return (0);
 }
 
-int	philo_eat(t_philosopher *philo)
+static int	set_last_meal(t_philosopher *philo)
 {
 	suseconds_t	time;
 
-	if (!am_i_alive(philo))
-		return (0);
-	if (thread_lock(philo->fork_one))
-		return (1);
-	log_status(philo, "has taken a fork");
-	if (thread_lock(philo->fork_two))
-		return (1);
-	log_status(philo, "has taken a fork");
 	if (thread_lock(&philo->lock))
 		return (1);
 	philo->eaten_meal += 1;
@@ -50,6 +42,21 @@ int	philo_eat(t_philosopher *philo)
 	philo->last_meal = time;
 	log_status(philo, "is eating");
 	if (thread_unlock(&philo->lock))
+		return (1);
+	return (0);
+}
+
+int	philo_eat(t_philosopher *philo)
+{
+	if (!am_i_alive(philo))
+		return (0);
+	if (thread_lock(philo->fork_one))
+		return (1);
+	log_status(philo, "has taken a fork");
+	if (thread_lock(philo->fork_two))
+		return (1);
+	log_status(philo, "has taken a fork");
+	if (set_last_meal(philo))
 		return (1);
 	if (philo_perform(philo->data->time_to_eat))
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 22:12:05 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/09 23:36:43 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/10 00:36:47 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ int	clear_scene(t_program *p)
 	{
 		status = pthread_mutex_destroy(&p->forks[i]);
 		if (status != 0)
-			return (printf("%d:pthread_mutex_destroy() failed: %d.\n", i,status), 1);
+			return (printf("pthread_mutex_destroy() failed: %d.\n", status), 1);
 	}
 	status = pthread_mutex_destroy(&p->lock);
 	if (status != 0)
-		return (printf("b:pthread_mutex_destroy() failed: %d.\n", status), 1);
+		return (printf("pthread_mutex_destroy() failed: %d.\n", status), 1);
 	status = pthread_mutex_destroy(&p->philosophers->lock);
 	if (status != 0)
 		return (printf("pthread_mutex_destroy() failed: %d.\n", status), 1);

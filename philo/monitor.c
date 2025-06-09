@@ -6,13 +6,14 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 07:55:15 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/09 23:51:16 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/10 00:40:01 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 #include <stdio.h>
 #include <unistd.h>
+
 int	wait_everyone_done(t_program *p)
 {
 	int	ready;
@@ -30,9 +31,10 @@ int	wait_everyone_done(t_program *p)
 	}
 	return (0);
 }
+
 int	kill_everyone(t_program *p)
 {
-	int status;
+	int	status;
 	int	i;
 
 	i = -1;
@@ -68,7 +70,7 @@ int	end_scene(t_program *p)
 	if (status == -1)
 		return (1);
 	if (status == 0)
-		return kill_everyone(p);
+		return (kill_everyone(p));
 	i = -1;
 	while (++i < p->data->num_of_philos)
 	{
@@ -93,7 +95,8 @@ int	check_philo_status(t_philosopher *philo)
 	if (time < 0)
 		return (-1);
 	if (time - philo->last_meal > philo->data->time_to_die
-		&& (philo->data->must_eat == -1 || philo->eaten_meal < philo->data->must_eat))
+		&& (philo->data->must_eat == -1
+			|| philo->eaten_meal < philo->data->must_eat))
 	{
 		if (thread_lock(&philo->program->lock))
 			return (-1);

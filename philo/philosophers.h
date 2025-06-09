@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 04:53:23 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/09 23:43:39 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/10 00:38:47 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,43 +58,41 @@ struct s_program
 	t_philosopher	*philosophers;
 };
 
-//input
-int	insert_input(int argc, char **argv, t_data *data);
-int	input_error(char *message);
-int	check_sign(const char **str);
-int	ft_atoi(const char *str);
-int	is_num(char *str);
-int	check_argc(int argc);
+int			insert_input(int argc, char **argv, t_data *data);
+int			input_error(char *message);
+int			check_sign(const char **str);
+int			ft_atoi(const char *str);
+int			is_num(char *str);
+int			check_argc(int argc);
 
-//scene
-int	create_scene(t_program *p);
-int	establish_actors(t_program *p);
-int	end_scene(t_program *p);
-int	kill_everyone(t_program *p);
-//scan scene
-int	is_program_running(t_program *p);
-int	is_everyone_alive(t_program *p);
-int	say_ready(t_program *p);
-int	wait_other_actors(t_program *p);
-//thread funcs
-int	thread_lock(pthread_mutex_t *mutex);
-int	thread_unlock(pthread_mutex_t *mutex);
-//monitor
-int	check_philo_status(t_philosopher *philo);
-int	monitoring(void *arg);
-//routine
-int	am_i_alive(t_philosopher *philo);
-void	*routine(void *arg);
-void	*one_fork_routine(void	*arg);
-//routine funcs
-int	log_status(t_philosopher *philo, char *msg);
-int	philo_eat(t_philosopher *philo);
-int	philo_think(t_philosopher *philo);
-int	philo_sleep(t_philosopher *philo);
-//time
+int			create_scene(t_program *p);
+int			establish_actors(t_program *p);
+int			end_scene(t_program *p);
+int			kill_everyone(t_program *p);
+
+int			is_program_running(t_program *p);
+int			is_everyone_alive(t_program *p);
+int			say_ready(t_program *p);
+int			wait_other_actors(t_program *p);
+
+int			thread_lock(pthread_mutex_t *mutex);
+int			thread_unlock(pthread_mutex_t *mutex);
+
+int			check_philo_status(t_philosopher *philo);
+int			monitoring(void *arg);
+
+int			am_i_alive(t_philosopher *philo);
+void		*routine(void *arg);
+void		*one_fork_routine(void	*arg);
+
+int			log_status(t_philosopher *philo, char *msg);
+int			philo_eat(t_philosopher *philo);
+int			philo_think(t_philosopher *philo);
+int			philo_sleep(t_philosopher *philo);
+
 suseconds_t	get_current_time(void);
 suseconds_t	philo_perform(suseconds_t time);
 suseconds_t	get_elapsed_time(t_program *p);
-int	start_timer(t_program *p);
+int			start_timer(t_program *p);
 
 #endif

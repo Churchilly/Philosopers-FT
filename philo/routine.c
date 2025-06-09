@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 23:04:25 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/10 00:00:28 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/10 00:31:38 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	am_i_alive(t_philosopher *philo)
 {
-	int ret;
-	
+	int	ret;
+
 	ret = 1;
 	if (thread_lock(&philo->lock))
 		return (-1);
@@ -40,7 +40,7 @@ void	*routine(void *arg)
 {
 	t_philosopher	*philo;
 	int				status;
-	
+
 	philo = (t_philosopher *)arg;
 	if (say_ready(philo->program) || wait_other_actors(philo->program))
 		return ((void *)1);
@@ -62,11 +62,12 @@ void	*routine(void *arg)
 		return ((void *)1);
 	return (NULL);
 }
+
 void	*one_fork_routine(void	*arg)
 {
 	t_philosopher	*philo;
 	int				status;
-	
+
 	philo = (t_philosopher *)arg;
 	if (say_ready(philo->program) || wait_other_actors(philo->program))
 		return ((void *)1);
