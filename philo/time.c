@@ -6,24 +6,19 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 21:03:21 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/05/19 07:13:27 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/09 20:23:47 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/time.h>
-#include <stddef.h>
-#include <unistd.h>
-#include <errno.h>
 #include "philosophers.h"
-
-
-int	thread_lock(pthread_mutex_t *mutex);
-int	thread_unlock(pthread_mutex_t *mutex);
+#include <errno.h>
+#include <stdio.h>
+#include <unistd.h>
 
 suseconds_t	get_current_time(void)
 {
 	struct timeval	tv;
-	
+
 	if (gettimeofday(&tv, NULL))
 		return (printf("gettimeofday() failed: %d.\n", errno), -1);
 	return (tv.tv_sec * 1e3 + tv.tv_usec / 1e3);
@@ -31,8 +26,8 @@ suseconds_t	get_current_time(void)
 
 static int	pass_time(long time, long start, long *time_passed)
 {
-	suseconds_t current_time;
-	
+	suseconds_t	current_time;
+
 	current_time = get_current_time();
 	if (current_time < 0)
 		return (1);
@@ -54,6 +49,7 @@ static int	pass_time(long time, long start, long *time_passed)
 	}
 	return (0);
 }
+
 suseconds_t	philo_perform(suseconds_t time)
 {
 	suseconds_t	start;
@@ -79,7 +75,7 @@ suseconds_t	philo_perform(suseconds_t time)
 suseconds_t	get_elapsed_time(t_program *p)
 {
 	suseconds_t	ret;
-	suseconds_t time;
+	suseconds_t	time;
 
 	time = get_current_time();
 	if (time < 0)
