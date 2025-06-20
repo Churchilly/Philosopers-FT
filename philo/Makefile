@@ -3,9 +3,6 @@ CFLAGS			= -Wall -Wextra -Werror -pthread
 
 NAME			= philo
 
-MANDATORY_DIR 		= philo
-BONUS_DIR			= philo_bonus
-
 SRC				= $(wildcard *.c)
 OBJ				= $(SRC:.c=.o)
 

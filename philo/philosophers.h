@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 04:53:23 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/10 00:38:47 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/11 07:21:35 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 typedef struct s_program		t_program;
 typedef struct s_data			t_data;
 typedef struct s_philosopher	t_philosopher;
-typedef enum e_states			t_states;
 typedef void					*(*t_routine_func)(void *d);
 
 struct	s_philosopher
@@ -49,7 +48,6 @@ struct s_program
 {
 	pthread_mutex_t	lock;
 	t_data			*data;
-	pthread_t		monitor;
 	int				everyone_ok;
 	int				running_thread_count;
 	int				philos_done_eating;

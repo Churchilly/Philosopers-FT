@@ -1,12 +1,9 @@
 CC				= cc
 CFLAGS			= -Wall -Wextra -Werror -pthread
 
-NAME			= philo.exe
+NAME			= philo_bonus
 
-MANDATORY_DIR 		= philo
-BONUS_DIR			= philo_bonus
-
-SRC				= $(wildcard $(MANDATORY_DIR)/*.c)
+SRC				= $(wildcard *.c)
 OBJ				= $(SRC:.c=.o)
 
 all: $(NAME)
