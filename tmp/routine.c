@@ -5,13 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/13 23:04:25 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/22 18:57:13 by yusudemi         ###   ########.fr       */
+/*   Created: 2025/06/23 17:22:29 by yusudemi          #+#    #+#             */
+/*   Updated: 2025/06/23 17:58:33 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-#include <stdio.h>
+#include <errno.h>
+
 int	am_i_alive(t_philosopher *philo)
 {
 	int	ret;

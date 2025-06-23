@@ -5,16 +5,16 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/14 07:55:15 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/22 18:51:57 by yusudemi         ###   ########.fr       */
+/*   Created: 2025/06/23 17:24:14 by yusudemi          #+#    #+#             */
+/*   Updated: 2025/06/23 20:10:17 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+#include <errno.h>
 #include <stdio.h>
-#include <unistd.h>
 
-int	kill_everyone(t_program *p)
+static int	kill_everyone(t_program *p)
 {
 	int	i;
 
@@ -30,77 +30,55 @@ int	kill_everyone(t_program *p)
 	return (0);
 }
 
-int	wait_everyone_done(t_program *p)
+static int	is_scene_finished(t_program *p)
 {
-	int	ready;
+	int	ret;
 
-	ready = 0;
-	while (!ready)
-	{
-		if (thread_lock(&p->lock))
-			return (1);
-		if (p->philos_done_eating == (p->data->num_of_philos))
-			ready = 1;
-		if (thread_unlock(&p->lock))
-			return (1);
-		usleep(100);
-	}
-	return (0);
+	ret = 0;
+	if (thread_lock(&p->lock))
+		return (-1);
+	if (!p->everyone_ok)
+		ret = 1;
+	if (p->philos_done_eating == p->data->num_of_philos)
+		ret = 1;
+	if (thread_unlock(&p->lock))
+		return (-1);
+	return (ret);
 }
 
-int	end_scene(t_program *p)
-{
-	int		i;
-	int		status;
-	void	*retval;
-
-	status = is_everyone_alive(p);
-	if (status == -1)
-		return (1);
-	if (status == 0)
-		kill_everyone(p);
-	wait_everyone_done(p);
-	i = -1;
-	while (++i < p->data->num_of_philos)
-	{
-		status = pthread_join(p->philosophers[i].thread, &retval);
-		if (status != 0)
-			return (printf("pthread_join() failed: %d.\n", status), 1);
-		if ((long)retval == (long)1)
-			return (1);
-	}
-	if ((long)retval == (long)1)
-		return (1);
-	return (0);
-}
-
-int	check_philo_status(t_philosopher *philo)
+static int	check_philo_status(t_philosopher *philo)
 {
 	suseconds_t	time;
-
-	if (thread_lock(&philo->lock))
-		return (-1);
+	suseconds_t	since_last_meal;
+	int			philo_eaten_meal;
+	
 	time = get_elapsed_time(philo->program);
 	if (time < 0)
 		return (-1);
-	if (time - philo->last_meal > philo->data->time_to_die
+	
+	if (thread_lock(&philo->lock))
+		return (-1);
+	since_last_meal = time - philo->last_meal;
+	philo_eaten_meal = philo->eaten_meal;
+	if (thread_unlock(&philo->lock))
+		return (-1);
+	if (since_last_meal >= philo->data->time_to_die
 		&& (philo->data->must_eat == -1
-			|| philo->eaten_meal < philo->data->must_eat))
+			|| philo_eaten_meal < philo->data->must_eat))
 	{
 		if (thread_lock(&philo->program->lock))
 			return (-1);
 		if (philo->program->everyone_ok)
 			printf("%ld %d died.\n", time, philo->id);
+		if (kill_everyone(philo->program))
+			return (-1);
 		philo->program->everyone_ok = 0;
 		if (thread_unlock(&philo->program->lock))
 			return (-1);
 	}
-	if (thread_unlock(&philo->lock))
-		return (-1);
 	return (0);
 }
-
-int	monitoring(void *arg)
+void	*monitoring(void *arg)
 {
 	t_program	*p;
 	int			i;
@@ -108,22 +86,22 @@ int	monitoring(void *arg)
 
 	p = (t_program *)arg;
 	if (start_timer(p) || say_ready(p) || wait_other_actors(p))
-		return (1);
-	retval = is_program_running(p);
+		return ((void *)1);
+	retval = is_scene_finished(p);
 	if (retval == -1)
-		return (1);
-	while (retval)
+		return ((void *)1);
+	while (!retval)
 	{
 		i = -1;
 		while (++i < p->data->num_of_philos)
 		{
 			retval = check_philo_status(&(p->philosophers[i]));
 			if (retval == -1)
-				return (1);
+				return ((void *)1);
 		}
-		retval = is_program_running(p);
+		retval = is_scene_finished(p);
 		if (retval == -1)
-			return (1);
+			return ((void *)1);
 	}
-	return (0);
+	return ((void *)0);
 }

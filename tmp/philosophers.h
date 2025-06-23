@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 04:53:23 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/23 17:55:17 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/23 19:28:42 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,15 @@ struct s_data
 	int	time_to_eat;
 	int	time_to_sleep;
 	int	must_eat;
+	int	hcf;
 };
 
 struct s_program
 {
 	pthread_mutex_t	lock;
+	pthread_mutex_t	write_lock;
 	t_data			*data;
+	pthread_t		monitor;
 	int				everyone_ok;
 	int				running_thread_count;
 	int				philos_done_eating;
@@ -64,19 +67,16 @@ int			is_num(char *str);
 int			check_argc(int argc);
 
 int			create_scene(t_program *p);
-int			establish_actors(t_program *p);
 int			end_scene(t_program *p);
-int			kill_everyone(t_program *p);
-
-int			is_program_running(t_program *p);
-int			is_everyone_alive(t_program *p);
-
+int			clear_scene(t_program *p);
+int			establish_actors(t_program *p);
+int			say_ready(t_program *p);
+int			wait_other_actors(t_program *p);
 
 int			thread_lock(pthread_mutex_t *mutex);
 int			thread_unlock(pthread_mutex_t *mutex);
 
-int			check_philo_status(t_philosopher *philo);
-int			monitoring(void *arg);
+void		*monitoring(void *arg);
 
 int			am_i_alive(t_philosopher *philo);
 void		*routine(void *arg);
