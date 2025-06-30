@@ -6,11 +6,11 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 21:03:21 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/09 20:23:47 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/30 19:16:23 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philosophers_bonus.h"
 #include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -72,17 +72,6 @@ suseconds_t	philo_perform(suseconds_t time)
 	return (0);
 }
 
-suseconds_t	get_elapsed_time(t_program *p)
-{
-	suseconds_t	ret;
-	suseconds_t	time;
-
-	time = get_current_time();
-	if (time < 0)
-		return (-1);
-	ret = time - p->start_time;
-	return (ret);
-}
 
 int	start_timer(t_program *p)
 {
@@ -91,6 +80,6 @@ int	start_timer(t_program *p)
 	time = get_current_time();
 	if (time < 0)
 		return (-1);
-	p->start_time = time;
+	p->data->start_time = time;
 	return (0);
 }

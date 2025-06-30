@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:41:19 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/20 04:10:18 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/30 19:16:08 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <signal.h>
 #include <sys/wait.h>
-#include <pthread.h>
 
-void	input_test(t_data *data)
+void	input_test(t_data *data) // for testing purposes
 {
 	printf("%d\n", data->num_of_philos);
-	printf("%d\n", data->time_to_die);
-	printf("%d\n", data->time_to_eat);
-	printf("%d\n", data->time_to_sleep);
+	printf("%ld\n", data->time_to_die);
+	printf("%ld\n", data->time_to_eat);
+	printf("%ld\n", data->time_to_sleep);
 	printf("%d\n", data->must_eat);
 }
 
@@ -41,84 +41,18 @@ void	ft_bzero(void *addr, int size)
 	return ;
 }
 
-t_semaphores	*create_semaphores(t_program *p)
+
+
+void	safe_print(t_philosopher *philo, char *message)
 {
-	
+	suseconds_t	timestamp;
+
+	sem_wait(philo->semaphores->write_lock);
+	timestamp = get_current_time() - philo->data->start_time;
+	printf("%ld %d %s\n", timestamp, philo->id, message);
+	sem_post(philo->semaphores->write_lock);
 }
 
-void	create_scene(t_program *p, t_data *d)
-{
-	int	i;
-	
-	p->data = d;
-	p->child_ids = mallloc(sizeof(pid_t) * d->num_of_philos);
-	p->semaphores = malloc(sizeof(t_semaphores));
-	if (!p->child_ids || !p->semaphores)
-		exit(1);
-	p->semaphores->die = sem_open("/die_sem", O_CREAT, 0644, 1);
-	p->semaphores->fork = sem_open("/fork_sem", O_CREAT, 0644, 1);
-	p->semaphores->done = sem_open("/meal_sem", O_CREAT, 0644, 1);
-	p->semaphores->ready = sem_open("/ready_sem", O_CREAT, 0644, 1);
-	if (p->semaphores->die == SEM_FAILED
-		|| p->semaphores->fork == SEM_FAILED
-		|| p->semaphores->done == SEM_FAILED
-		|| p->semaphores->ready == SEM_FAILED)
-		exit(1);
-	i = -1;
-	while (++i < d->num_of_philos)
-		p->child_ids[i] = -1;
-}
-
-void	*meal_monitor(void	*arg)
-{
-	t_philosopher	*philo;
-
-	philo = (t_philosopher *)arg;
-	while (1)
-	{
-		if (philo->data->must_eat > 0 && philo->eaten_meal == philo->data->must_eat)
-		{
-			//say done
-			exit(1);
-		}
-	}
-}
-
-void	routine(t_philosopher *philo)
-{
-	pthread_t	death_checker;
-	pthread_t	meal_checker;
-
-	pthread_create(&death_checker, NULL, death_monitor, philo);
-	if (philo->data->must_eat >= 0)
-		pthread_create(&meal_checker, NULL, meal_monitor, philo);
-	//routine with semaphores must recode eat-sleep-think functions .p
-}
-void	establish_actors(t_program *p)
-{
-	int		i;
-	pid_t	pid;
-	t_philosopher	philo;
-
-	i = -1;
-	while (++i < p->data->num_of_philos)
-	{
-		pid = fork();
-		if (pid < 0)
-			exit(1);
-		if (pid == 0)
-		{
-			p->child_ids[i] = pid;
-			philo.id = i + 1;
-			philo.eaten_meal = 0;
-			philo.data = p->data;
-			philo.semaphores = p->semaphores;
-			//wait all philos ready with ready semaphore
-			//start routine
-			exit(0);
-		}
-	}
-}
 
 int	main(int argc, char **argv)
 {
@@ -126,15 +60,15 @@ int	main(int argc, char **argv)
 	t_program		program;
 	
 	ft_bzero(&data, sizeof(t_data));
-	if (insert_input(argc, argv, &data))
-		return (1);
-	input_test(&data);
+	insert_input(argc, argv, &data);
+	//input_test(&data);
 	create_scene(&program, &data);
-	establish_actors();
-	
+	establish_actors(&program);
+	end_scene(&program);
+	return (0);
 }
 
-void	at_exit(t_program	*p) // maybe a destructor ?_?
+void	clear_scene(t_program	*p)
 {
 	int	i;
 	
@@ -145,7 +79,7 @@ void	at_exit(t_program	*p) // maybe a destructor ?_?
 		i = -1;
 		while (++i < p->data->num_of_philos)
 		{
-			if (p->child_ids > 0)
+			if (p->child_ids[i] > 0)
 				kill(p->child_ids[i], SIGKILL);
 		}
 		i = -1;
@@ -158,37 +92,67 @@ void	at_exit(t_program	*p) // maybe a destructor ?_?
 		p->child_ids = NULL;
 	}
 	printf("-FORKS CLEANED-\n");
+	
+	// CLEAN PHILOSOPHERS
+	if (p->philosophers)
+	{
+		i = -1;
+		while (++i < p->data->num_of_philos)
+			sem_destroy(&p->philosophers[i].last_meal_lock);
+		free(p->philosophers);
+		p->philosophers = NULL;
+	}
+	
 	// CLEAN SEMAPs
 	printf("-SEMAPHORE CLEANUP START-\n");
 	if (p->semaphores)
 	{
-		if (p->semaphores->die)
+		if (p->semaphores->die_lock)
 		{
-			sem_close(p->semaphores->die);
+			sem_close(p->semaphores->die_lock);
 			sem_unlink("/die_sem");
 		}
-		if (p->semaphores->write)
+		if (p->semaphores->write_lock)
 		{
-			sem_close(p->semaphores->write);
-			sem_unlink("/die_sem");
+			sem_close(p->semaphores->write_lock);
+			sem_unlink("/write_sem");
 		}
-		if (p->semaphores->fork)
+		if (p->semaphores->forks)
 		{
-			sem_close(p->semaphores->fork);
-			sem_unlink("/die_sem");
+			sem_close(p->semaphores->forks);
+			sem_unlink("/fork_sem");
 		}
-		if (p->semaphores->meal)
+		if (p->semaphores->meal_complete)
 		{
-			sem_close(p->semaphores->meal);
-			sem_unlink("/die_sem");
-		}
-		if (p->semaphores->ready)
-		{
-			sem_close(p->semaphores->ready);
-			sem_unlink("/die_sem");
+			sem_close(p->semaphores->meal_complete);
+			sem_unlink("/meal_sem");
 		}
 		free(p->semaphores);
 		p->semaphores = NULL;
 		printf("-SEMAPHORES CLEANED-\n");
+	}
+}
+
+void	establish_actors(t_program *p)
+{
+	int		i;
+	pid_t	pid;
+
+	i = -1;
+	while (++i < p->data->num_of_philos)
+	{
+		pid = fork();
+		if (pid < 0)
+			exit(1);
+		if (pid == 0) // Child process
+		{
+			// Use pre-initialized philosopher
+			routine(&p->philosophers[i]);
+			exit(0);
+		}
+		else // Parent process
+		{
+			p->child_ids[i] = pid;
+		}
 	}
 }

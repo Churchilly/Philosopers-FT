@@ -6,57 +6,42 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 02:00:41 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/11 07:20:43 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/06/30 19:07:28 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers_bonus.h"
 #include <unistd.h>
 
-int	input_error(char *message)
-{
-	char	*p;
-
-	p = message;
-	while (*p)
-		p++;
-	write(2, "Error: ", 8);
-	write(2, message, p - message);
-	write(2, "\n", 1);
-	return (0);
-}
-
-static int	check_and_insert(int *p, char *d)
+static void	check_and_insert(int *p, char *d)
 {
 	if (!is_num(d))
-		return (input_error("All must be number."), 1);
+		input_error("All must be number.");
 	*p = ft_atoi(d);
-	if ((*p) < 0)
-		return (1);
-	return (0);
 }
 
-int	insert_input(int argc, char **argv, t_data *d)
+void	insert_input(int argc, char **argv, t_data *d)
 {
 	int	buffer[4];
 
-	if (!check_argc(argc))
-		return (1);
+	if (argc < 5)
+		input_error("Missing parameters\nUsage: ./philo\
+ <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep>\
+ [number_of_times_each_philosopher_must_eat]");
+	if (argc > 6)
+		input_error("More parameters than expected\nUsage: ./philo\
+ <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep>\
+ [number_of_times_each_philosopher_must_eat]");
 	d->must_eat = -1;
 	if (argc == 6)
 	{
 		--argc;
-		if (check_and_insert(&(d->must_eat), argv[argc]))
-			return (1);
+		check_and_insert(&(d->must_eat), argv[argc]);
 	}
 	while (--argc > 0)
-	{
-		if (check_and_insert(&(buffer[argc - 1]), argv[argc]))
-			return (1);
-	}
+		check_and_insert(&(buffer[argc - 1]), argv[argc]);
 	d->num_of_philos = buffer[0];
 	d->time_to_die = buffer[1];
 	d->time_to_eat = buffer[2];
 	d->time_to_sleep = buffer[3];
-	return (0);
 }
