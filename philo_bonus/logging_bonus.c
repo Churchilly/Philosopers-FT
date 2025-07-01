@@ -1,46 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_bonus.c                                       :+:      :+:    :+:   */
+/*   logging_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/10 17:41:19 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 05:05:31 by yusudemi         ###   ########.fr       */
+/*   Created: 2025/07/01 05:00:00 by yusudemi          #+#    #+#             */
+/*   Updated: 2025/07/01 05:06:43 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers_bonus.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <pthread.h>
 #include <signal.h>
 #include <sys/wait.h>
 
-void	ft_bzero(void *addr, int size)
+void	log_status(t_philosopher *philo, char *message)
 {
-	char	*bytes;
-	int		i;
+	suseconds_t	timestamp;
 
-	bytes = addr;
-	i = 0;
-	while (i < size)
-		bytes[i++] = '\0';
-	return ;
-}
-
-int	main(int argc, char **argv)
-{
-	t_data		data;
-	t_program	program;
-
-	ft_bzero(&data, sizeof(t_data));
-	insert_input(argc, argv, &data);
-	create_scene(&program, &data);
-	establish_actors(&program);
-	end_scene(&program);
-	return (0);
+	sem_wait(philo->semaphores->write_lock);
+	timestamp = get_current_time() - philo->data->start_time;
+	printf("%ld %d %s\n", timestamp, philo->id, message);
+	fflush(stdout);
+	sem_post(philo->semaphores->write_lock);
 }

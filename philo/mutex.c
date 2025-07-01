@@ -1,39 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   actors.c                                           :+:      :+:    :+:   */
+/*   thread_management.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/30 18:16:07 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/30 19:17:36 by yusudemi         ###   ########.fr       */
+/*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
+/*   Updated: 2025/07/01 02:33:43 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers_bonus.h"
+#include "philosophers.h"
 #include <stdlib.h>
 #include <unistd.h>
-void	establish_actors(t_program *p)
-{
-	int		i;
-	pid_t	pid;
+#include <errno.h>
+#include <stdio.h>
 
-	i = -1;
-	start_timer(p);
-	while (++i < p->data->num_of_philos)
-	{
-		pid = fork();
-		if (pid < 0)
-			exit(1);
-		if (pid == 0) // Child process
-		{
-			// Use the pre-initialized philosopher
-			routine(&p->philosophers[i]);
-			exit(0);
-		}
-		else // Parent process
-		{
-			p->child_ids[i] = pid;
-		}
-	}
+int	lock_mutex(pthread_mutex_t *mutex)
+{
+	if (pthread_mutex_lock(mutex) != 0)
+		return (printf("pthread_mutex_lock() failed:%d\n", errno), 1);
+	return (0);
+}
+
+int	unlock_mutex(pthread_mutex_t *mutex)
+{
+	if (pthread_mutex_unlock(mutex) != 0)
+		return (printf("pthread_mutex_unlock() failed:%d\n", errno), 1);
+	return (0);
 }

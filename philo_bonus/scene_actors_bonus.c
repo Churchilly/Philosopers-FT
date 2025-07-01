@@ -1,46 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_bonus.c                                       :+:      :+:    :+:   */
+/*   actors_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/10 17:41:19 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 05:05:31 by yusudemi         ###   ########.fr       */
+/*   Created: 2025/06/30 18:16:07 by yusudemi          #+#    #+#             */
+/*   Updated: 2025/07/01 04:47:08 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers_bonus.h"
-#include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <pthread.h>
-#include <signal.h>
-#include <sys/wait.h>
 
-void	ft_bzero(void *addr, int size)
+void	establish_actors(t_program *p)
 {
-	char	*bytes;
 	int		i;
+	pid_t	pid;
 
-	bytes = addr;
-	i = 0;
-	while (i < size)
-		bytes[i++] = '\0';
-	return ;
-}
-
-int	main(int argc, char **argv)
-{
-	t_data		data;
-	t_program	program;
-
-	ft_bzero(&data, sizeof(t_data));
-	insert_input(argc, argv, &data);
-	create_scene(&program, &data);
-	establish_actors(&program);
-	end_scene(&program);
-	return (0);
+	start_timer(p);
+	i = -1;
+	while (++i < p->data->num_of_philos)
+	{
+		pid = fork();
+		if (pid < 0)
+			exit(1);
+		if (pid == 0)
+		{
+			if (p->data->num_of_philos == 1)
+				one_fork_routine(&p->philosophers[i]);
+			else
+				routine(&p->philosophers[i]);
+			exit(0);
+		}
+		else
+			p->child_ids[i] = pid;
+	}
 }

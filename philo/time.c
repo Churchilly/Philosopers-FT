@@ -5,23 +5,24 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/12 21:03:21 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/06/30 19:16:23 by yusudemi         ###   ########.fr       */
+/*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
+/*   Updated: 2025/07/01 02:43:35 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers_bonus.h"
+#include "philosophers.h"
+#include <sys/time.h>
+#include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
-#include <unistd.h>
 
 suseconds_t	get_current_time(void)
 {
 	struct timeval	tv;
 
-	if (gettimeofday(&tv, NULL))
-		return (printf("gettimeofday() failed: %d.\n", errno), -1);
-	return (tv.tv_sec * 1e3 + tv.tv_usec / 1e3);
+	if (gettimeofday(&tv, NULL) == -1)
+		return (-1);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
 static int	pass_time(long time, long start, long *time_passed)
@@ -72,14 +73,20 @@ suseconds_t	philo_perform(suseconds_t time)
 	return (0);
 }
 
+suseconds_t	get_elapsed_time(t_program *p)
+{
+	suseconds_t	current;
+
+	current = get_current_time();
+	if (current == -1)
+		return (-1);
+	return (current - p->data->start_time);
+}
 
 int	start_timer(t_program *p)
 {
-	suseconds_t	time;
-
-	time = get_current_time();
-	if (time < 0)
-		return (-1);
-	p->data->start_time = time;
+	p->data->start_time = get_current_time();
+	if (p->data->start_time < 0)
+		return (1);
 	return (0);
 }

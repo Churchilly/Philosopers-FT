@@ -1,34 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input_checkers_bonus.c                             :+:      :+:    :+:   */
+/*   input_checkers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 15:04:36 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 04:47:08 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/01 03:06:00 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers_bonus.h"
+#include "philosophers.h"
 #include <limits.h>
-#include <stdlib.h>
-#include <unistd.h>
 
-void	input_error(char *message)
-{
-	char	*p;
-
-	p = message;
-	while (*p)
-		p++;
-	write(2, "Error: ", 8);
-	write(2, message, p - message);
-	write(2, "\n", 1);
-	exit(1);
-}
-
-static int	check_sign(const char **str)
+int	check_sign(const char **str)
 {
 	int	ret;
 
@@ -36,7 +21,7 @@ static int	check_sign(const char **str)
 	if (**str == '-' || **str == '+')
 	{
 		if (**str == '-')
-			input_error("Parameters can't be negative.");
+			return (input_error("Parameters can't be negative."), -1);
 		ret = 1;
 		(*str)++;
 	}
@@ -59,11 +44,11 @@ int	ft_atoi(const char *str)
 	{
 		num = (num * 10) + (*str - '0');
 		if (num > INT_MAX)
-			input_error("Input must be smaller than INT_MAX.");
+			return (input_error("Input must be smaller than INT_MAX."), -1);
 		str++;
 	}
 	if (sign && num == 0)
-		input_error("Invalid input.");
+		return (input_error("Invalid input."), -1);
 	return ((int)(num));
 }
 
@@ -79,5 +64,18 @@ int	is_num(char *str)
 			return (0);
 		str++;
 	}
+	return (1);
+}
+
+int	check_argc(int argc)
+{
+	if (argc < 5)
+		return (input_error("Missing parameters\nUsage: ./philo\
+ <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep>\
+ [number_of_times_each_philosopher_must_eat]"));
+	if (argc > 6)
+		return (input_error("More parameters than expected\nUsage: ./philo\
+ <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep>\
+ [number_of_times_each_philosopher_must_eat]"));
 	return (1);
 }
