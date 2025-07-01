@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:45:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 20:19:32 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 00:59:05 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,18 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <errno.h>
+
+void	*kill_monitor(void	*arg)
+{
+	t_philosopher *philo;
+
+	philo = (t_philosopher *)arg;
+	sem_wait(philo->semaphores->term_lock);
+	sem_post(philo->semaphores->term_lock);
+	clear_fork(philo->program, 0);
+	exit(0);
+	return (NULL);
+}
 
 void	*death_monitor(void	*arg)
 {
@@ -32,7 +44,7 @@ void	*death_monitor(void	*arg)
 		{
 			sem_wait(philo->semaphores->write_lock);
 			printf("%ld %d died\n", current_elapsed, philo->id);
-			sem_post(philo->semaphores->write_lock);
+			sem_post(philo->semaphores->term_lock);
 			break ;
 		}
 		usleep(100);
@@ -54,13 +66,13 @@ static int	check_if_finished(t_philosopher *philo)
 
 void	prepare_for_routine(t_philosopher *philo)
 {
-	if (sem_wait(&philo->last_meal_lock))
+	if (sem_wait(philo->semaphores->finish_lock))
 	{
 		printf("sem_wait failed:%d\n", errno);
 		exit(1);
 	}
 	philo->last_meal = get_elapsed_time(philo->data);
-	if (sem_post(&philo->last_meal_lock))
+	if (sem_post(philo->semaphores->finish_lock))
 	{
 		printf("sem_post failed:%d\n", errno);
 		exit(1);
@@ -82,8 +94,12 @@ void	prepare_for_routine(t_philosopher *philo)
 void	routine(t_philosopher *philo)
 {
 	pthread_t	death_checker;
-
-	pthread_create(&death_checker, NULL, death_monitor, philo);
+	pthread_t	kill_checker;
+	
+	pthread_create(&death_monitor, NULL, death_monitor, philo);
+	pthread_create(&kill_monitor, NULL, kill_monitor, philo);
+	pthread_detach(death_monitor);
+	pthread_detach(death_monitor);
 	prepare_for_routine(philo);
 	while (!check_if_finished(philo))
 	{
@@ -91,32 +107,33 @@ void	routine(t_philosopher *philo)
 			|| check_if_finished(philo) || think(philo))
 			break ;
 	}
-	pthread_join(death_checker, NULL);
 }
 
 void	one_fork_routine(t_philosopher *philo)
 {
 	pthread_t	death_checker;
+	pthread_t	kill_checker;
 
-	if (sem_wait(&philo->last_meal_lock))
+	if (sem_wait(philo->semaphores->finish_lock))
 	{
 		printf("sem_wait failed:%d\n", errno);
 		exit(1);
 	}
 	philo->last_meal = get_elapsed_time(philo->data);
-	if (sem_post(&philo->last_meal_lock))
+	if (sem_post(philo->semaphores->finish_lock))
 	{
 		printf("sem_post failed:%d\n", errno);
 		exit(1);
 	}
 	pthread_create(&death_checker, NULL, death_monitor, philo);
+	pthread_create(&kill_checker, NULL, kill_monitor, philo);
+	pthread_detach(death_checker);
+	pthread_detach(kill_checker);
 	sem_wait(philo->semaphores->forks);
 	log_status(philo, "has taken a fork");
 	philo_perform(philo->data->time_to_die);
 	while (!check_if_finished(philo))
 	{
-		usleep(100);
+		usleep(philo->data->time_to_die);
 	}
-	pthread_join(death_checker, NULL);
-	
 }

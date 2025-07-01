@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:45:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 20:20:01 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 00:30:39 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,17 @@ static t_semaphores	*create_semaphores(t_data *d)
 	sems = malloc(sizeof(t_semaphores));
 	if (!sems)
 		return (NULL);
-	sem_unlink("/die_sem");
 	sem_unlink("/fork_sem");
 	sem_unlink("/write_sem");
 	sem_unlink("/meal_sem");
+	sem_unlink("/term_sem");
 	sems->forks = sem_open("/fork_sem", O_CREAT, 0644, d->num_of_philos);
 	sems->write_lock = sem_open("/write_sem", O_CREAT, 0644, 1);
 	sems->finish_lock = sem_open("/meal_sem", O_CREAT, 0644, 1);
+	sems->term_lock = sem_open("/term_sem", O_CREAT, 0644, 0);
 	if (sems->forks == SEM_FAILED
 		|| sems->write_lock == SEM_FAILED
+		|| sems->term_lock == SEM_FAILED
 		|| sems->finish_lock == SEM_FAILED)
 		return (NULL);
 	return (sems);
@@ -48,12 +50,11 @@ static t_philosopher	*init_philos(t_program *p)
 	{
 		philos[i].id = i + 1;
 		philos[i].eaten_meal = 0;
+		philos[i].program = p;
 		philos[i].alive = 1;
 		philos[i].last_meal = 0;
 		philos[i].data = p->data;
 		philos[i].semaphores = p->semaphores;
-		if (sem_init(&philos[i].last_meal_lock, 0, 1) != 0)
-			return (NULL);
 	}
 	return (philos);
 }

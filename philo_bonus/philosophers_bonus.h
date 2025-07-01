@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:40:21 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 20:19:21 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 00:58:44 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ struct	s_semaphores
 	sem_t	*forks;
 	sem_t	*write_lock;
 	sem_t	*finish_lock;
+	sem_t	*term_lock;
 };
 
 struct	s_philosopher
@@ -35,9 +36,7 @@ struct	s_philosopher
 	int				id;
 	int				eaten_meal;
 	int				alive;
-	sem_t			last_meal_lock;
 	suseconds_t		last_meal;
-	pthread_t		death_monitor;
 	t_data			*data;
 	t_semaphores	*semaphores;
 	t_program		*program;
@@ -79,8 +78,9 @@ void		cleanup_and_exit(t_program *p);
 
 void		create_scene(t_program *p, t_data *d);
 void		end_scene(t_program *p);
-void		clear_scene(t_program *p, int exit_status);
 void		establish_actors(t_program *p);
+void		clear_scene(t_program *p, int exit_status);
+void		clear_fork(t_program *p, int exit_status);
 
 void		routine(t_philosopher *philo);
 void		one_fork_routine(t_philosopher *philo);
