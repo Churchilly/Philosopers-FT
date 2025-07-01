@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:41:19 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 05:05:31 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:57:47 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,11 @@ int	main(int argc, char **argv)
 	t_program	program;
 
 	ft_bzero(&data, sizeof(t_data));
+	ft_bzero(&data, sizeof(t_program));
 	insert_input(argc, argv, &data);
 	create_scene(&program, &data);
 	establish_actors(&program);
 	end_scene(&program);
+	clear_scene(&program, 0);
 	return (0);
 }

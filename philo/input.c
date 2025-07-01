@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 02:00:41 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 03:02:17 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/01 18:02:48 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,23 +36,6 @@ static int	check_and_insert(int *p, char *d)
 	return (0);
 }
 
-void	insert_hcf(t_data *d)
-{
-	int	tmp;
-	int	a;
-	int	b;
-
-	a = d->time_to_eat;
-	b = d->time_to_sleep;
-	while (b != 0)
-	{
-		tmp = b;
-		b = a % b;
-		a = tmp;
-	}
-	d->hcf = a;
-}
-
 int	insert_input(int argc, char **argv, t_data *d)
 {
 	int	buffer[4];
@@ -75,6 +58,5 @@ int	insert_input(int argc, char **argv, t_data *d)
 	d->time_to_die = buffer[1];
 	d->time_to_eat = buffer[2];
 	d->time_to_sleep = buffer[3];
-	insert_hcf(d);
 	return (0);
 }

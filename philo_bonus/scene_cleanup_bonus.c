@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup_bonus.c                                    :+:      :+:    :+:   */
+/*   scene_cleanup_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 06:00:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 05:00:49 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:44:38 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,6 @@ static void	clean_semaphores(t_program *p)
 {
 	if (p->semaphores)
 	{
-		if (p->semaphores->die_lock)
-		{
-			sem_close(p->semaphores->die_lock);
-			sem_unlink("/die_sem");
-		}
 		if (p->semaphores->write_lock)
 		{
 			sem_close(p->semaphores->write_lock);
@@ -72,9 +67,9 @@ static void	clean_semaphores(t_program *p)
 			sem_close(p->semaphores->forks);
 			sem_unlink("/fork_sem");
 		}
-		if (p->semaphores->meal_complete)
+		if (p->semaphores->finish_lock)
 		{
-			sem_close(p->semaphores->meal_complete);
+			sem_close(p->semaphores->finish_lock);
 			sem_unlink("/meal_sem");
 		}
 		free(p->semaphores);
@@ -82,9 +77,10 @@ static void	clean_semaphores(t_program *p)
 	}
 }
 
-void	clear_scene(t_program *p)
+void	clear_scene(t_program *p, int exit_status)
 {
 	clean_child_processes(p);
 	clean_philosophers(p);
 	clean_semaphores(p);
+	exit(exit_status);
 }

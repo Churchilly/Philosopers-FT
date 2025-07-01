@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:40:21 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 04:47:08 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/01 20:19:21 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,21 @@ typedef struct s_collector		t_collector;
 struct	s_semaphores
 {
 	sem_t	*forks;
-	sem_t	*die_lock;
 	sem_t	*write_lock;
-	sem_t	*meal_complete;
+	sem_t	*finish_lock;
 };
 
 struct	s_philosopher
 {
 	int				id;
 	int				eaten_meal;
+	int				alive;
 	sem_t			last_meal_lock;
 	suseconds_t		last_meal;
 	pthread_t		death_monitor;
 	t_data			*data;
 	t_semaphores	*semaphores;
+	t_program		*program;
 };
 
 struct s_data
@@ -54,6 +55,8 @@ struct s_data
 
 struct s_program
 {
+	
+	int				philos_done_eating;
 	t_data			*data;
 	pid_t			*child_ids;
 	t_philosopher	*philosophers;
@@ -74,17 +77,15 @@ void		ft_bzero(void *addr, int size);
 void		log_status(t_philosopher *philo, char *message);
 void		cleanup_and_exit(t_program *p);
 
-void		set_last_meal(t_philosopher *philo);
-long		get_last_meal(t_philosopher *philo);
-
 void		create_scene(t_program *p, t_data *d);
 void		end_scene(t_program *p);
-void		clear_scene(t_program *p);
+void		clear_scene(t_program *p, int exit_status);
 void		establish_actors(t_program *p);
 
 void		routine(t_philosopher *philo);
 void		one_fork_routine(t_philosopher *philo);
 void		*death_monitor(void *arg);
+long		get_last_meal(t_philosopher *philo);
 int			eat(t_philosopher *philo);
 int			philo_sleep(t_philosopher *philo);
 int			think(t_philosopher *philo);

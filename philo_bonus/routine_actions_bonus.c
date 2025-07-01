@@ -6,11 +6,47 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:14:34 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 05:00:49 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/01 19:38:22 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers_bonus.h"
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static void	set_last_meal(t_philosopher *philo)
+{
+	if (sem_wait(&philo->last_meal_lock))
+	{
+		printf("sem_wait failed:%d\n", errno);
+		exit(1);
+	}
+	philo->last_meal = get_elapsed_time(philo->data) + philo->data->time_to_eat;
+	if (sem_post(&philo->last_meal_lock))
+	{
+		printf("sem_post failed:%d\n", errno);
+		exit(1);
+	}
+}
+
+long	get_last_meal(t_philosopher *philo)
+{
+	long	value;
+
+	if (sem_wait(&philo->last_meal_lock))
+	{
+		printf("sem_wait failed:%d\n", errno);
+		exit(1);
+	}
+	value = (long)philo->last_meal;
+	if (sem_post(&philo->last_meal_lock))
+	{
+		printf("sem_post failed:%d\n", errno);
+		exit(1);
+	}
+	return (value);
+}
 
 int	eat(t_philosopher *philo)
 {

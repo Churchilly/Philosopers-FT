@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 03:31:23 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/01 18:34:57 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ void	*routine(void *arg)
 			|| check_if_finished(philo) || philo_think(philo))
 			break ;
 	}
-	log_status(philo, "done");
 	lock_mutex(&philo->program->finish_lock);
 	philo->program->philos_done_eating += 1;
 	unlock_mutex(&philo->program->finish_lock);

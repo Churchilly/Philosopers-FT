@@ -8,7 +8,6 @@ SRC				= main_bonus.c \
 				  scene_actors_bonus.c \
 				  routine_bonus.c \
 				  routine_actions_bonus.c \
-				  protected_vars_bonus.c \
 				  logging_bonus.c \
 				  scene_cleanup_bonus.c \
 				  input_bonus.c \

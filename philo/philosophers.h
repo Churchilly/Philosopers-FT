@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 04:53:23 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 03:18:28 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/01 18:02:35 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ struct s_data
 	suseconds_t		time_to_eat;
 	suseconds_t		time_to_sleep;
 	int				must_eat;
-	int				hcf;
 	suseconds_t		start_time;
 };
 
