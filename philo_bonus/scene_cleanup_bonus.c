@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 06:00:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 00:36:32 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 22:21:54 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ static void	close_semaphores(t_program *p)
 		p->semaphores = NULL;
 	}
 }
+
 void	clear_fork(t_program *p, int exit_status)
 {
 	if (p->child_ids)
@@ -103,6 +104,5 @@ void	clear_scene(t_program *p, int exit_status)
 	}
 	clean_philosophers(p);
 	clean_semaphores(p);
-	(void)exit_status;
-	//exit(exit_status);
+	exit(exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:16:07 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 00:59:14 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 22:36:39 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,34 +69,18 @@ static int	handle_process_exit(t_program *p, int status)
 
 void	increase_philos_done(t_program *p)
 {
-	if (sem_wait(p->semaphores->finish_lock))
-	{
-		printf("sem_wait failed:%d\n", errno);
-		clear_scene(p, 1);
-	}
+	sem_wait(p->semaphores->finish_lock);
 	p->philos_done_eating += 1;
-	if (sem_post(p->semaphores->finish_lock))
-	{
-		printf("sem_post failed:%d\n", errno);
-		clear_scene(p, 1);
-	}
+	sem_post(p->semaphores->finish_lock);
 }
 
 int	check_philos_done(t_program *p)
 {
-	int ret;
-	
-	if (sem_wait(p->semaphores->finish_lock))
-	{
-		printf("sem_wait failed:%d\n", errno);
-		clear_scene(p, 1);
-	}
+	int	ret;
+
+	sem_wait(p->semaphores->finish_lock);
 	ret = p->philos_done_eating == p->data->num_of_philos;
-	if (sem_post(p->semaphores->finish_lock))
-	{
-		printf("sem_post failed:%d\n", errno);
-		clear_scene(p, 1);
-	}
+	sem_post(p->semaphores->finish_lock);
 	return (ret);
 }
 

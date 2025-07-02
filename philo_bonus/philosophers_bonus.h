@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:40:21 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 00:58:44 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 22:20:50 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ struct s_data
 
 struct s_program
 {
-	
 	int				philos_done_eating;
 	t_data			*data;
 	pid_t			*child_ids;
@@ -85,6 +84,7 @@ void		clear_fork(t_program *p, int exit_status);
 void		routine(t_philosopher *philo);
 void		one_fork_routine(t_philosopher *philo);
 void		*death_monitor(void *arg);
+void		*kill_monitor(void	*arg);
 long		get_last_meal(t_philosopher *philo);
 int			eat(t_philosopher *philo);
 int			philo_sleep(t_philosopher *philo);

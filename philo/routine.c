@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 18:34:57 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 23:11:30 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,6 @@ static int	check_if_finished(t_philosopher *philo)
 
 void	prepare_for_routine(t_philosopher *philo)
 {
-	lock_mutex(&philo->lock);
-	philo->last_meal = get_elapsed_time(philo->program);
-	unlock_mutex(&philo->lock);
 	if (philo->id % 2 == 0)
 	{
 		log_status(philo, "is thinking");
@@ -48,6 +45,9 @@ void	prepare_for_routine(t_philosopher *philo)
 		philo_perform(philo->data->time_to_eat
 			+ (philo->data->time_to_sleep * 0.5));
 	}
+	lock_mutex(&philo->lock);
+	philo->last_meal = get_elapsed_time(philo->program);
+	unlock_mutex(&philo->lock);
 }
 
 void	*routine(void *arg)
@@ -77,6 +77,7 @@ void	*one_fork_routine(void *arg)
 	philo->last_meal = get_elapsed_time(philo->program);
 	unlock_mutex(&philo->lock);
 	log_status(philo, "has taken a fork");
-	philo_perform(philo->data->time_to_die);
+	while (!check_if_finished(philo))
+		philo_perform(philo->data->time_to_die);
 	return (NULL);
 }

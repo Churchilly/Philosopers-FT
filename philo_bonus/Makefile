@@ -12,6 +12,7 @@ SRC				= main_bonus.c \
 				  scene_cleanup_bonus.c \
 				  input_bonus.c \
 				  input_checkers_bonus.c \
+				  monitor_bonus.c \
 				  time_bonus.c
 OBJ				= $(SRC:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 03:19:52 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 23:04:58 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ int	log_status(t_philosopher *philo, char *msg)
 	if (!should_continue_logging(philo))
 		return (unlock_mutex(&philo->program->write_lock), 0);
 	timestamp = get_elapsed_time(philo->program);
-	if (timestamp == -1)
-		return (1);
 	printf("%ld %d %s\n", timestamp, philo->id, msg);
 	unlock_mutex(&philo->program->write_lock);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 03:30:46 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 23:18:22 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,10 @@ static int	take_forks(t_philosopher *philo)
 		first_fork = philo->fork_two;
 		second_fork = philo->fork_one;
 	}
-	if (lock_mutex(first_fork))
-		return (1);
-	if (log_status(philo, "has taken a fork"))
-		return (unlock_mutex(first_fork), 1);
-	if (lock_mutex(second_fork))
-		return (unlock_mutex(first_fork), 1);
-	if (log_status(philo, "has taken a fork"))
-		return (unlock_mutex(first_fork), unlock_mutex(second_fork), 1);
+	lock_mutex(first_fork);
+	log_status(philo, "has taken a fork");
+	lock_mutex(second_fork);
+	log_status(philo, "has taken a fork");
 	return (0);
 }
 
@@ -47,14 +43,12 @@ int	philo_eat(t_philosopher *philo)
 		return (1);
 	if (log_status(philo, "is eating"))
 		return (unlock_mutex(philo->fork_one),
-			unlock_mutex(philo->fork_two), 0);
+				unlock_mutex(philo->fork_two), 0);
 	lock_mutex(&philo->lock);
 	philo->last_meal = get_elapsed_time(philo->program)
 		+ philo->data->time_to_eat;
 	unlock_mutex(&philo->lock);
-	if (philo_perform(philo->data->time_to_eat))
-		return (unlock_mutex(philo->fork_one),
-			unlock_mutex(philo->fork_two), 0);
+	philo_perform(philo->data->time_to_eat);
 	lock_mutex(&philo->lock);
 	philo->eaten_meal++;
 	unlock_mutex(&philo->lock);

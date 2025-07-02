@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:14:34 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 00:32:19 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/02 22:37:19 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,34 +17,18 @@
 
 static void	set_last_meal(t_philosopher *philo)
 {
-	if (sem_wait(philo->semaphores->finish_lock))
-	{
-		printf("sem_wait failed:%d\n", errno);
-		exit(1);
-	}
+	sem_wait(philo->semaphores->finish_lock);
 	philo->last_meal = get_elapsed_time(philo->data) + philo->data->time_to_eat;
-	if (sem_post(philo->semaphores->finish_lock))
-	{
-		printf("sem_post failed:%d\n", errno);
-		exit(1);
-	}
+	sem_post(philo->semaphores->finish_lock);
 }
 
 long	get_last_meal(t_philosopher *philo)
 {
 	long	value;
 
-	if (sem_wait(philo->semaphores->finish_lock))
-	{
-		printf("sem_wait failed:%d\n", errno);
-		exit(1);
-	}
+	sem_wait(philo->semaphores->finish_lock);
 	value = (long)philo->last_meal;
-	if (sem_post(philo->semaphores->finish_lock))
-	{
-		printf("sem_post failed:%d\n", errno);
-		exit(1);
-	}
+	sem_post(philo->semaphores->finish_lock);
 	return (value);
 }
 
