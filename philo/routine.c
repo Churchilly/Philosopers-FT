@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/03 04:08:25 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 05:09:02 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void	*one_fork_routine(void *arg)
 	t_philosopher	*philo;
 
 	philo = (t_philosopher *)arg;
+	wait_actors(philo->program);
 	lock_mutex(&philo->lock);
 	philo->last_meal = get_elapsed_time(philo->program);
 	unlock_mutex(&philo->lock);
