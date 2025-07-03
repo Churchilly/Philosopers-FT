@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 23:09:44 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 03:31:35 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ static int	check_simulation_status(t_program *p)
 {
 	int	status;
 
-	lock_mutex(&p->finish_lock);
+	lock_mutex(&p->program_lock);
 	status = ((p->everyone_ok) && !(p->data->must_eat != -1
 				&& p->philos_done_eating == p->data->num_of_philos));
-	unlock_mutex(&p->finish_lock);
+	unlock_mutex(&p->program_lock);
 	return (status);
 }
 

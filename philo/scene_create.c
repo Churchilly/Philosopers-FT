@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 17:39:28 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 03:31:35 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static int	init_mutexes(t_program *p)
 {
 	int	i;
 
-	if (pthread_mutex_init(&p->finish_lock, NULL) != 0)
+	if (pthread_mutex_init(&p->program_lock, NULL) != 0)
 		return (1);
 	if (pthread_mutex_init(&p->write_lock, NULL) != 0)
 		return (1);

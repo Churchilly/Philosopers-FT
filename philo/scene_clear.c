@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 02:23:19 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 03:04:08 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 03:31:35 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void	free_program_locks(t_program *p)
 		free(p->forks);
 		p->forks = NULL;
 	}
-	pthread_mutex_destroy(&p->finish_lock);
+	pthread_mutex_destroy(&p->program_lock);
 	pthread_mutex_destroy(&p->write_lock);
 }
 

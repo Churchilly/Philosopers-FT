@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 23:11:30 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 03:35:22 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ static int	check_if_finished(t_philosopher *philo)
 	int	dinner_complete;
 
 	dinner_complete = 0;
-	lock_mutex(&philo->program->finish_lock);
+	lock_mutex(&philo->program->program_lock);
 	everyone_ok = philo->program->everyone_ok;
-	unlock_mutex(&philo->program->finish_lock);
+	unlock_mutex(&philo->program->program_lock);
 	if (philo->data->must_eat != -1)
 	{
 		lock_mutex(&(philo->lock));
@@ -50,11 +50,24 @@ void	prepare_for_routine(t_philosopher *philo)
 	unlock_mutex(&philo->lock);
 }
 
+void	wait_actors(t_program *p)
+{
+	lock_mutex(&(p->program_lock));
+	while (p->wait_actors)
+	{
+		unlock_mutex(&(p->program_lock));
+		usleep(10);
+		lock_mutex(&(p->program_lock));
+	}
+	unlock_mutex(&(p->program_lock));
+}
+
 void	*routine(void *arg)
 {
 	t_philosopher	*philo;
 
 	philo = (t_philosopher *)arg;
+	wait_actors(philo->program);
 	prepare_for_routine(philo);
 	while (!check_if_finished(philo))
 	{
@@ -62,9 +75,9 @@ void	*routine(void *arg)
 			|| check_if_finished(philo) || philo_think(philo))
 			break ;
 	}
-	lock_mutex(&philo->program->finish_lock);
+	lock_mutex(&philo->program->program_lock);
 	philo->program->philos_done_eating += 1;
-	unlock_mutex(&philo->program->finish_lock);
+	unlock_mutex(&philo->program->program_lock);
 	return (NULL);
 }
 

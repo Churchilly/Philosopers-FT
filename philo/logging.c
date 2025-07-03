@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 23:04:58 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 03:31:35 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ static int	should_continue_logging(t_philosopher *philo)
 {
 	int	continue_log;
 
-	lock_mutex(&philo->program->finish_lock);
+	lock_mutex(&philo->program->program_lock);
 	continue_log = philo->program->everyone_ok;
-	unlock_mutex(&philo->program->finish_lock);
+	unlock_mutex(&philo->program->program_lock);
 	return (continue_log);
 }
 
@@ -41,9 +41,9 @@ int	announce_death(t_philosopher *philo)
 {
 	suseconds_t	timestamp;
 
-	lock_mutex(&philo->program->finish_lock);
+	lock_mutex(&philo->program->program_lock);
 	philo->program->everyone_ok = 0;
-	unlock_mutex(&philo->program->finish_lock);
+	unlock_mutex(&philo->program->program_lock);
 	lock_mutex(&philo->program->write_lock);
 	timestamp = get_elapsed_time(philo->program);
 	if (timestamp == -1)

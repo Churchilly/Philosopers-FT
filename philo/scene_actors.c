@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 02:32:03 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 03:04:58 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 03:36:05 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ int	establish_actors(t_program *p)
 		routine_func = one_fork_routine;
 	else
 		routine_func = routine;
-	if (start_timer(p))
-		return (1);
+	p->wait_actors = 1;
 	i = -1;
 	while (++i < p->data->num_of_philos)
 	{
@@ -32,6 +31,10 @@ int	establish_actors(t_program *p)
 				routine_func, &p->philosophers[i]) != 0)
 			return (1);
 	}
+	lock_mutex(&(p->program_lock));
+	p->wait_actors = 0;
+	start_timer(p);
+	unlock_mutex(&(p->program_lock));
 	if (pthread_create(&p->monitor, NULL, monitoring, p) != 0)
 		return (1);
 	return (0);

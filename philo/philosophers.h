@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 04:53:23 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/01 18:02:35 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 03:32:11 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ struct s_data
 
 struct s_program
 {
-	pthread_mutex_t	finish_lock;
+	pthread_mutex_t	program_lock;
+	int				wait_actors;
 	int				everyone_ok;
 	int				philos_done_eating;
 	pthread_mutex_t	write_lock;
