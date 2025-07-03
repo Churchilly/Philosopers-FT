@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/03 03:31:35 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 04:44:39 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ static int	is_philo_alive(t_philosopher *philo)
 	suseconds_t	last_meal_time;
 
 	current_time = get_elapsed_time(philo->program);
-	if (current_time == -1)
-		return (0);
 	lock_mutex(&philo->lock);
 	last_meal_time = philo->last_meal;
 	unlock_mutex(&philo->lock);
@@ -49,6 +47,7 @@ void	*monitoring(void *arg)
 	int			i;
 
 	p = (t_program *)arg;
+	wait_actors(p);
 	usleep(p->data->time_to_die);
 	while (check_simulation_status(p))
 	{

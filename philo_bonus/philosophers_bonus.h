@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 17:40:21 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 22:20:50 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 04:24:20 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ struct	s_semaphores
 	sem_t	*write_lock;
 	sem_t	*finish_lock;
 	sem_t	*term_lock;
+	sem_t	*start_lock;
 };
 
 struct	s_philosopher

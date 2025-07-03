@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 04:53:23 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/03 03:32:11 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 04:08:19 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ void		*one_fork_routine(void	*arg);
 
 int			log_status(t_philosopher *philo, char *msg);
 int			announce_death(t_philosopher *philo);
+void		wait_actors(t_program *p);
 
 int			philo_eat(t_philosopher *philo);
 int			philo_think(t_philosopher *philo);

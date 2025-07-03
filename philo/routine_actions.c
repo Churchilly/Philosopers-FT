@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/03 03:30:37 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 04:46:47 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	philo_eat(t_philosopher *philo)
 		return (1);
 	if (log_status(philo, "is eating"))
 		return (unlock_mutex(philo->fork_one),
-				unlock_mutex(philo->fork_two), 0);
+			unlock_mutex(philo->fork_two), 0);
 	lock_mutex(&philo->lock);
 	philo->last_meal = get_elapsed_time(philo->program);
 	unlock_mutex(&philo->lock);

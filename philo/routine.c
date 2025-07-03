@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/03 03:35:22 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 04:08:25 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,11 @@ void	prepare_for_routine(t_philosopher *philo)
 void	wait_actors(t_program *p)
 {
 	lock_mutex(&(p->program_lock));
-	while (p->wait_actors)
+	p->wait_actors += 1;
+	while (p->wait_actors == p->data->num_of_philos)
 	{
 		unlock_mutex(&(p->program_lock));
-		usleep(10);
+		usleep(1);
 		lock_mutex(&(p->program_lock));
 	}
 	unlock_mutex(&(p->program_lock));

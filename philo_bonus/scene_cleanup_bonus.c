@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 06:00:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 22:21:54 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 05:00:07 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,10 @@
 #include <signal.h>
 #include <sys/wait.h>
 
-static void	clean_philosophers(t_program *p)
+static void	delete_semaphore(sem_t *sem, const char *name)
 {
-	if (p->philosophers)
-	{
-		free(p->philosophers);
-		p->philosophers = NULL;
-	}
+	sem_close(sem);
+	sem_unlink(name);
 }
 
 static void	clean_semaphores(t_program *p)
@@ -31,23 +28,23 @@ static void	clean_semaphores(t_program *p)
 	{
 		if (p->semaphores->write_lock)
 		{
-			sem_close(p->semaphores->write_lock);
-			sem_unlink("/write_sem");
+			delete_semaphore(p->semaphores->write_lock, "/write_sem");
 		}
 		if (p->semaphores->forks)
 		{
-			sem_close(p->semaphores->forks);
-			sem_unlink("/fork_sem");
+			delete_semaphore(p->semaphores->forks, "/fork_sem");
 		}
 		if (p->semaphores->finish_lock)
 		{
-			sem_close(p->semaphores->finish_lock);
-			sem_unlink("/meal_sem");
+			delete_semaphore(p->semaphores->finish_lock, "/meal_sem");
 		}
 		if (p->semaphores->term_lock)
 		{
-			sem_close(p->semaphores->term_lock);
-			sem_unlink("/term_sem");
+			delete_semaphore(p->semaphores->term_lock, "/term_sem");
+		}
+		if (p->semaphores->start_lock)
+		{
+			delete_semaphore(p->semaphores->start_lock, "/start_sem");
 		}
 		free(p->semaphores);
 		p->semaphores = NULL;
@@ -73,6 +70,10 @@ static void	close_semaphores(t_program *p)
 		if (p->semaphores->term_lock)
 		{
 			sem_close(p->semaphores->term_lock);
+		}
+		if (p->semaphores->start_lock)
+		{
+			sem_close(p->semaphores->start_lock);
 		}
 		free(p->semaphores);
 		p->semaphores = NULL;
@@ -102,7 +103,11 @@ void	clear_scene(t_program *p, int exit_status)
 		free(p->child_ids);
 		p->child_ids = NULL;
 	}
-	clean_philosophers(p);
+	if (p->philosophers)
+	{
+		free(p->philosophers);
+		p->philosophers = NULL;
+	}
 	clean_semaphores(p);
 	exit(exit_status);
 }

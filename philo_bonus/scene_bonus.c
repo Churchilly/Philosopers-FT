@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 18:45:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/02 00:30:39 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 04:24:53 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,16 @@ static t_semaphores	*create_semaphores(t_data *d)
 	sem_unlink("/write_sem");
 	sem_unlink("/meal_sem");
 	sem_unlink("/term_sem");
+	sem_unlink("/start_sem");
 	sems->forks = sem_open("/fork_sem", O_CREAT, 0644, d->num_of_philos);
 	sems->write_lock = sem_open("/write_sem", O_CREAT, 0644, 1);
 	sems->finish_lock = sem_open("/meal_sem", O_CREAT, 0644, 1);
 	sems->term_lock = sem_open("/term_sem", O_CREAT, 0644, 0);
+	sems->start_lock = sem_open("/start_sem", O_CREAT, 0644, 0);
 	if (sems->forks == SEM_FAILED
 		|| sems->write_lock == SEM_FAILED
 		|| sems->term_lock == SEM_FAILED
+		|| sems->start_lock == SEM_FAILED
 		|| sems->finish_lock == SEM_FAILED)
 		return (NULL);
 	return (sems);
@@ -65,7 +68,6 @@ void	create_scene(t_program *p, t_data *d)
 
 	p->data = d;
 	p->philos_done_eating = 0;
-	p->data->start_time = get_current_time();
 	p->child_ids = malloc(sizeof(pid_t) * d->num_of_philos);
 	if (!p->child_ids)
 		clear_scene(p, 1);

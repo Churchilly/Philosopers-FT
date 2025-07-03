@@ -6,7 +6,7 @@
 /*   By: yusudemi <yusudemi@student.42kocaeli.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/29 05:40:00 by yusudemi          #+#    #+#             */
-/*   Updated: 2025/07/03 03:31:35 by yusudemi         ###   ########.fr       */
+/*   Updated: 2025/07/03 04:45:05 by yusudemi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,6 @@ int	announce_death(t_philosopher *philo)
 	unlock_mutex(&philo->program->program_lock);
 	lock_mutex(&philo->program->write_lock);
 	timestamp = get_elapsed_time(philo->program);
-	if (timestamp == -1)
-		return (1);
 	printf("%ld %d %s\n", timestamp, philo->id, "died");
 	unlock_mutex(&philo->program->write_lock);
 	return (0);
